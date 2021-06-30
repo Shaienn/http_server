@@ -5,19 +5,19 @@
 
 ### HTTP server
 
-Simple `HTTP` server which by default uses `localhost` on port `8000`. Any `HTTP` requests to the server start the job which reads file (/tmp/download_test by default).
-If job is done during of alowed time slot (5 seconds by default) then the server sends `HTTP` response with the status `200` and some html content.
-If job is not done during of alowed time then server sends `HTTP` response with the status `503`.
-If job is interrupted for some other reasons then server sends `HTTP` response with the status `500`.
+Simple `HTTP` server which (by default) uses `localhost` on port `8000`. Any `HTTP` requests to the server start the job which reads file (/tmp/download_test by default).
+If job is done during of alowed time slot (5 seconds by default) then the server sends `HTTP` response with the status `200` and some `html` content.
+If job is not done during of time slot then server sends `HTTP` response with the status `503`.
+If job is interrupted due to some other reason then server sends `HTTP` response with the status `500`.
 
 #### How to use
 
 Go to the `http_server` folder and do `make run`. When application is compiled and started the functionality can be tested from any `http` client including standard web-browser
-by using the `http://localhost:8000/` request. The file `/tmp/download_test` will be created during of compilation (it is defined in Makefile).
+by request to the `http://localhost:8000/` address. The file `/tmp/download_test` will be created during of compilation (it is defined in Makefile).
 
 ### HTTP server test stand
 
-The test stand for the http_server which allows to create specified number of connections to the server with specified rate per second.
+The test stand for the `http_server` which allows to create specified number of connections to the server with specified rate per second.
 
 #### How to use
 
@@ -35,7 +35,7 @@ Example:
 
 `http_server_test_stand_app:run_load(10, 1).` - will start 1 connection per second until 10 connections are not started.
 
-When test is complete the report is generated:
+When test is complete then report is generated:
 
 ```
 --------- REPORT START ---------
@@ -51,5 +51,6 @@ Counters:
 ---------- REPORT END ----------
 ```
 
-It shows time range of the test and corresponding counter values. It helps to understand how much requests were sent, how much were successfull and how much have done the job.
+It shows time range of the test and corresponding counter values. 
+It helps to understand how much requests were sent, how much were successfull and how much have done the job.
 
