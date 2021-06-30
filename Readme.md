@@ -1,5 +1,3 @@
-# Instruction
-
 * `http_server` - http_server application itself
 * `http_server_test_stand` - the stand to do benchmark for the http_server
   
