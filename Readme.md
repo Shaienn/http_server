@@ -51,5 +51,5 @@ Counters:
 ---------- REPORT END ----------
 ```
 
-It shows time range of the test and corresponding counter values. It helps to understand how much requests were sent, how much were successfull and how much complete the job.
+It shows time range of the test and corresponding counter values. It helps to understand how much requests were sent, how much were successfull and how much have done the job.
 
