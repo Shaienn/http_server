@@ -21,7 +21,8 @@ The test stand for the `http_server` which allows to create specified number of 
 
 #### How to use
 
-Go to the `http_server_test_stand` folder and do `make run`. When application is compiled and started the `http_server` can be tested using the following  API:
+Go to the `http_server_test_stand` folder and do `make run`. The stand will start `http_server` automatically. 
+When application is compiled and started the `http_server` can be tested using the following  API:
 
 `http_server_test_stand_app:run_load(<X>, <Y>).`
 
