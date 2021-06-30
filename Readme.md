@@ -21,7 +21,7 @@ The test stand for the http_server which allows to create specified number of co
 
 #### How to use
 
-Go to the `http_server` folder and do `make run`. When application is compiled and started the functionality can be used by API:
+Go to the `http_server` folder and do `make run`. When application is compiled and started the `http_server` can be tested using the following  API:
 
 `http_server_test_stand_app:run_load(<X>, <Y>).`
 
