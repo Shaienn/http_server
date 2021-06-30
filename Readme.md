@@ -13,7 +13,7 @@ If job is interrupted for some other reasons then server sends `HTTP` response w
 #### How to use
 
 Go to the `http_server` folder and do `make run`. When application is compiled and started the functionality can be tested from any `http` client including standard web-browser
-by using the `http://localhost:8000/` request.
+by using the `http://localhost:8000/` request. The file `/tmp/download_test` will be created during of compilation (it is defined in Makefile).
 
 ### HTTP server test stand
 
