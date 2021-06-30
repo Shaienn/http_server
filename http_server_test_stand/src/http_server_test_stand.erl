@@ -9,12 +9,18 @@
 -define(SERVER, ?MODULE).
 -define(COUNTER_DB, counter_db).
 
--record(analyzer_state, {port, connections}).
+-record(analyzer_state, {
+	port = undefined :: port(),
+	connections = [] :: list({pid(), reference()}),
+	started = false :: boolean()}
+).
+
 -record(run_load_counters, {
 	sent = 0 :: non_neg_integer(),
 	succ = 0 :: non_neg_integer(),
 	fail = 0 :: non_neg_integer(),
 	'200' = 0 :: non_neg_integer(),
+	'500' = 0 :: non_neg_integer(),
 	'503' = 0 :: non_neg_integer()
 }).
 
@@ -32,6 +38,10 @@ init(Port) ->
 handle_call(_Request, _From, State = #analyzer_state{}) ->
 	{reply, ok, State}.
 
+handle_cast({run, _TotalNumber, _NumberPerSecond}, State = #analyzer_state{started = true}) ->
+	io:format("The test is ongoing. Please wait!~n", []),
+	{noreply, State};
+
 handle_cast({run, TotalNumber, NumberPerSecond}, State = #analyzer_state{port = Port}) ->
 	ets:insert(?COUNTER_DB, {run_load_start, os:timestamp()}),
 	ets:insert(?COUNTER_DB, #run_load_counters{}),
@@ -42,22 +52,22 @@ handle_cast({run, TotalNumber, NumberPerSecond}, State = #analyzer_state{port = 
 						  spawn_monitor(fun() -> do_request(Port) end)
 					  end || _ <- lists:seq(1, TotalNumber)],
 
-	{noreply, State#analyzer_state{connections = ConnPidMonList}};
+	{noreply, State#analyzer_state{connections = ConnPidMonList, started = true}};
 
 handle_cast(_Request, State = #analyzer_state{}) ->
 	{noreply, State}.
 
 handle_info({'DOWN', Ref, process, Pid, _Reason}, State = #analyzer_state{connections = ConnPidMonList}) ->
-	NewConnPidMonList = case lists:delete({Pid, Ref}, ConnPidMonList) of
-							[] ->
-								% run_load is done
-								ets:insert(?COUNTER_DB, {run_load_end, os:timestamp()}),
-								generate_report(),
-								[];
-							L ->
-								L
-						end,
-	{noreply, State#analyzer_state{connections = NewConnPidMonList}};
+	NewState = case lists:delete({Pid, Ref}, ConnPidMonList) of
+				   [] ->
+					   % run_load is done
+					   ets:insert(?COUNTER_DB, {run_load_end, os:timestamp()}),
+					   generate_report(),
+					   State#analyzer_state{connections = [], started = false};
+				   L ->
+					   State#analyzer_state{connections = L}
+			   end,
+	{noreply, NewState};
 
 handle_info(_Info, State = #analyzer_state{}) ->
 	{noreply, State}.
@@ -78,14 +88,13 @@ inc_cnt(Type) ->
 			  succ -> #run_load_counters.succ;
 			  fail -> #run_load_counters.fail;
 			  200 -> #run_load_counters.'200';
+			  500 -> #run_load_counters.'500';
 			  503 -> #run_load_counters.'503'
 		  end,
 	ets:update_counter(?COUNTER_DB, run_load_counters, {Pos, 1}).
 
 get_http_msg_status_code({{_HttpVersion, StatusCode, _ReasonPhrase}, _Headers, _Body}) ->
 	StatusCode.
-
-
 
 do_request(Port) ->
 	inc_cnt(sent),
@@ -120,6 +129,7 @@ generate_report() ->
 	io:format("   Successfull requests: ~p~n", [Counters#run_load_counters.succ]),
 	io:format("   Failed requests: ~p~n", [Counters#run_load_counters.fail]),
 	io:format("   Requests with status code 200: ~p~n", [Counters#run_load_counters.'200']),
+	io:format("   Requests with status code 500: ~p~n", [Counters#run_load_counters.'500']),
 	io:format("   Requests with status code 503: ~p~n", [Counters#run_load_counters.'503']),
 	io:format("---------- REPORT END ----------~n", []),
 	ok.
