@@ -26,7 +26,9 @@ Go to the `http_server` folder and do `make run`. When application is compiled a
 `http_server_test_stand_app:run_load(<X>, <Y>).`
 
 Where:
+
   X - is total number of connections to be created;
+  
   Y - number of connections to be created per second.
   
 Example:
