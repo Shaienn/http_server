@@ -5,10 +5,10 @@
 
 ### HTTP server
 
-Simple `HTTP` server which (by default) uses `localhost` on port `8000`. Any `HTTP` requests to the server start the job which reads file (/tmp/download_test by default).
+Simple `HTTP` server which (by default) uses `localhost` on port `8000`. Any `HTTP` request to the server starts reading file (/tmp/download_test by default).
 If job is done during of alowed time slot (5 seconds by default) then the server sends `HTTP` response with the status `200` and some `html` content.
-If job is not done during of time slot then server sends `HTTP` response with the status `503`.
-If job is interrupted due to some other reason then server sends `HTTP` response with the status `500`.
+If file has not been read during of the time slot then server sends `HTTP` response with the status code `503`.
+If reading is interrupted due to some other reason then server sends `HTTP` response with the status `500`.
 
 #### How to use
 
@@ -47,6 +47,7 @@ Counters:
    Successfull requests: 10
    Failed requests: 0
    Requests with status code 200: 10
+   Requests with status code 500: 0
    Requests with status code 503: 0
 ---------- REPORT END ----------
 ```
